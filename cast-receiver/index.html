@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quvex Music Player - Cast Receiver</title>
+    <script src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b3d 100%);
+            color: #ffffff;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+        }
+
+        #background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #background-blur {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: calc(100% + 100px);
+            height: calc(100% + 100px);
+            background-size: cover;
+            background-position: center;
+            filter: blur(80px) brightness(0.3);
+            opacity: 0.6;
+            transition: opacity 1s ease;
+        }
+
+        #gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(26, 26, 26, 0.8) 100%);
+        }
+
+        #main-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+        }
+
+        #branding {
+            position: absolute;
+            top: 60px;
+            left: 80px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.5);
+        }
+
+        #app-name {
+            font-size: 36px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #content {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            max-width: 1400px;
+        }
+
+        #album-art-container {
+            position: relative;
+        }
+
+        #album-art {
+            width: 500px;
+            height: 500px;
+            border-radius: 24px;
+            object-fit: cover;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6),
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        #album-art.default {
+            background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 200px;
+            color: white;
+        }
+
+        #metadata {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        #track-title {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        #track-artist {
+            font-size: 40px;
+            font-weight: 400;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #track-album {
+            font-size: 32px;
+            font-weight: 300;
+            color: #b0b0b0;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #progress-container {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        #progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7C3AED 0%, #A855F7 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+        }
+
+        #progress-time {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 24px;
+            color: #b0b0b0;
+        }
+
+        #queue-info {
+            position: absolute;
+            bottom: 60px;
+            left: 80px;
+            font-size: 28px;
+            color: #b0b0b0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        #queue-position {
+            background: rgba(124, 58, 237, 0.3);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid rgba(124, 58, 237, 0.5);
+        }
+
+        #status {
+            position: absolute;
+            bottom: 60px;
+            right: 80px;
+            font-size: 32px;
+            padding: 16px 32px;
+            border-radius: 16px;
+            background: rgba(124, 58, 237, 0.2);
+            border: 2px solid rgba(124, 58, 237, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #status-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="background-container">
+        <div id="background-blur"></div>
+        <div id="gradient-overlay"></div>
+    </div>
+
+    <div id="main-container">
+        <div id="branding">
+            <div id="logo">Q</div>
+            <div id="app-name">Quvex Music Player</div>
+        </div>
+
+        <div id="content">
+            <div id="album-art-container">
+                <img id="album-art" class="default" src="" alt="Album Art" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div id="album-art" class="default" style="display: none;">♪</div>
+            </div>
+
+            <div id="metadata">
+                <div id="track-title">Welcome to Quvex</div>
+                <div id="track-artist">Ready to Cast</div>
+                <div id="track-album">Select a track from your phone</div>
+
+                <div id="progress-container">
+                    <div id="progress-bar-bg">
+                        <div id="progress-bar"></div>
+                    </div>
+                    <div id="progress-time">
+                        <span id="current-time">0:00</span>
+                        <span id="total-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="queue-info">
+            <div id="queue-position">Track <span id="current-track">1</span> of <span id="total-tracks">1</span></div>
+        </div>
+
+        <div id="status">
+            <span id="status-icon">⏸</span>
+            <span id="status-text">Paused</span>
+        </div>
+    </div>
+
+    <script>
+        const context = cast.framework.CastReceiverContext.getInstance();
+        const playerManager = context.getPlayerManager();
+
+        // Format time helper
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Update UI with media info
+        function updateMediaInfo(mediaInfo) {
+            if (!mediaInfo || !mediaInfo.metadata) return;
+
+            const metadata = mediaInfo.metadata;
+
+            // Update title, artist, album
+            document.getElementById('track-title').textContent =
+                metadata.title || 'Unknown Title';
+            document.getElementById('track-artist').textContent =
+                metadata.artist || metadata.subtitle || 'Unknown Artist';
+            document.getElementById('track-album').textContent =
+                metadata.albumName || 'Unknown Album';
+
+            // Update album art
+            const albumArt = document.querySelector('#album-art:not(.default)');
+            const defaultArt = document.querySelector('#album-art.default');
+
+            if (metadata.images && metadata.images.length > 0) {
+                albumArt.src = metadata.images[0].url;
+                albumArt.style.display = 'block';
+                defaultArt.style.display = 'none';
+
+                // Update background blur
+                document.getElementById('background-blur').style.backgroundImage =
+                    `url(${metadata.images[0].url})`;
+            } else {
+                albumArt.style.display = 'none';
+                defaultArt.style.display = 'flex';
+            }
+
+            // Update duration
+            if (mediaInfo.duration) {
+                document.getElementById('total-time').textContent = formatTime(mediaInfo.duration);
+            }
+
+            // Add fade-in animation
+            document.getElementById('content').classList.remove('fade-in');
+            void document.getElementById('content').offsetWidth; // Trigger reflow
+            document.getElementById('content').classList.add('fade-in');
+        }
+
+        // Update progress
+        function updateProgress(currentTime, duration) {
+            if (!duration || duration === 0) return;
+
+            const percentage = (currentTime / duration) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('current-time').textContent = formatTime(currentTime);
+        }
+
+        // Update queue info
+        function updateQueueInfo() {
+            const queueData = playerManager.getQueueData();
+            if (queueData && queueData.items) {
+                const currentIndex = queueData.currentItemIndex || 0;
+                const totalItems = queueData.items.length;
+
+                document.getElementById('current-track').textContent = currentIndex + 1;
+                document.getElementById('total-tracks').textContent = totalItems;
+            }
+        }
+
+        // Update status
+        function updateStatus(playerState) {
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            const status = document.getElementById('status');
+
+            switch (playerState) {
+                case cast.framework.messages.PlayerState.PLAYING:
+                    statusIcon.textContent = '▶';
+                    statusText.textContent = 'Playing';
+                    status.classList.add('pulse');
+                    break;
+                case cast.framework.messages.PlayerState.PAUSED:
+                    statusIcon.textContent = '⏸';
+                    statusText.textContent = 'Paused';
+                    status.classList.remove('pulse');
+                    break;
+                case cast.framework.messages.PlayerState.BUFFERING:
+                    statusIcon.textContent = '⏳';
+                    statusText.textContent = 'Buffering';
+                    status.classList.add('pulse');
+                    break;
+                case cast.framework.messages.PlayerState.IDLE:
+                    statusIcon.textContent = '⏹';
+                    statusText.textContent = 'Idle';
+                    status.classList.remove('pulse');
+                    break;
+            }
+        }
+
+        // Player event listeners
+        playerManager.addEventListener(
+            cast.framework.events.EventType.PLAYER_LOAD_COMPLETE,
+            () => {
+                const mediaInfo = playerManager.getMediaInformation();
+                updateMediaInfo(mediaInfo);
+                updateQueueInfo();
+            }
+        );
+
+        playerManager.addEventListener(
+            cast.framework.events.EventType.MEDIA_STATUS,
+            (event) => {
+                updateStatus(event.mediaStatus.playerState);
+                updateQueueInfo();
+            }
+        );
+
+        // Progress update interval
+        setInterval(() => {
+            const currentTime = playerManager.getCurrentTimeSec();
+            const duration = playerManager.getDurationSec();
+            updateProgress(currentTime, duration);
+        }, 1000);
+
+        // Intercept LOAD request to customize
+        playerManager.setMessageInterceptor(
+            cast.framework.messages.MessageType.LOAD,
+            (loadRequestData) => {
+                console.log('Loading media:', loadRequestData);
+                return loadRequestData;
+            }
+        );
+
+        // Start receiver
+        const options = new cast.framework.CastReceiverOptions();
+        options.disableIdleTimeout = false;
+        options.maxInactivity = 3600; // 1 hour
+
+        context.start(options);
+        console.log('Quvex Cast Receiver started');
+    </script>
+</body>
+</html>
