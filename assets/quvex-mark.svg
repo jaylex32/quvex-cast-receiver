@@ -3,7 +3,7 @@
     <linearGradient id="g" x1="34" y1="29" x2="218" y2="228" gradientUnits="userSpaceOnUse">
       <stop stop-color="#6EE7DF"/>
       <stop offset=".52" stop-color="#77B8FF"/>
-      <stop offset="1" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#F7FCFF"/>
     </linearGradient>
     <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="translate(91 73) rotate(47) scale(169)" gradientUnits="userSpaceOnUse">
       <stop stop-color="#202B43"/>
