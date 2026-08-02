@@ -21,8 +21,9 @@ body {
 
 body {
   /* The permanent brand lockup already identifies Quvex. Keep CAF's
-     fallback media tile empty so it does not repeat the same mark. */
-  --playback-logo-image: none;
+     fallback media tile transparent so it displays neither a repeated mark
+     nor CAF's replacement application-title label. */
+  --playback-logo-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E");
 }
 
 cast-media-player {
