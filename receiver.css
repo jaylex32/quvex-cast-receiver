@@ -20,7 +20,9 @@ body {
 }
 
 body {
-  --playback-logo-image: url("assets/quvex-mark.svg");
+  /* The permanent brand lockup already identifies Quvex. Keep CAF's
+     fallback media tile empty so it does not repeat the same mark. */
+  --playback-logo-image: none;
 }
 
 cast-media-player {
