@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Quvex Cast Receiver</title>
+  <link rel="icon" href="assets/quvex-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="receiver.css?v=1.2.0">
+  <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+</head>
+<body>
+  <!-- CAF's media player preserves Google's complete queue, live-stream,
+       accessibility, buffering and remote-control behavior. Quvex styles it. -->
+  <cast-media-player id="quvex-player"></cast-media-player>
+
+  <div class="receiver-chrome" aria-hidden="true">
+    <div class="brand-lockup">
+      <img src="assets/quvex-mark.svg" alt="">
+      <div>
+        <span class="brand-name">QUVEX</span>
+        <span class="brand-subtitle">HIGH FIDELITY CAST</span>
+      </div>
+    </div>
+    <div id="format-badge" class="format-badge" hidden>
+      <span id="status-dot" class="status-dot"></span>
+      <span id="format-label">READY</span>
+    </div>
+  </div>
+
+  <noscript>JavaScript is required by the Google Cast Web Receiver.</noscript>
+  <script src="receiver.js?v=1.2.0"></script>
+</body>
+</html>

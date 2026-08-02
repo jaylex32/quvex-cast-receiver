@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Quvex">
+  <defs>
+    <linearGradient id="g" x1="34" y1="29" x2="218" y2="228" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6EE7DF"/>
+      <stop offset=".52" stop-color="#77B8FF"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="translate(91 73) rotate(47) scale(169)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202B43"/>
+      <stop offset="1" stop-color="#0A0D16"/>
+    </radialGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#05070D" flood-opacity=".7"/>
+    </filter>
+  </defs>
+  <rect x="19" y="19" width="218" height="218" rx="62" fill="url(#h)" stroke="url(#g)" stroke-width="3" filter="url(#s)"/>
+  <path d="M129 59c-39 0-69 29-69 68s30 69 69 69c13 0 25-3 35-9l22 22 17-17-21-21c10-12 16-27 16-44 0-39-30-68-69-68Zm0 25c25 0 44 18 44 43 0 10-3 19-8 26l-20-20-17 17 18 18c-5 2-11 3-17 3-25 0-44-19-44-44s19-43 44-43Z" fill="url(#g)"/>
+  <path d="M95 118v20M111 108v40M127 98v30M143 105v21M159 114v19" stroke="#E9FFFF" stroke-width="5" stroke-linecap="round" opacity=".72"/>
+</svg>
